@@ -1,3 +1,6 @@
+import { LinksFunction,MetaFunction } from "@remix-run/node";
+// 2
+import styles from './styles/app.css';
 import {
   Links,
   LiveReload,
@@ -6,6 +9,10 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: styles }]
+}
 
 export default function App() {
   return (
