@@ -17,4 +17,14 @@ model User {
   updatedAt DateTime @updatedAt
   email     String   @unique
   password  String
+  profile   Profile // 👈
+}
+
+// ./prisma/schema.prisma
+
+// ...
+
+type Profile {
+  firstName String
+  lastName  String
 }
