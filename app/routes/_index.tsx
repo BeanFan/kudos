@@ -1,3 +1,6 @@
+import { LoaderFunction } from "@remix-run/node"
+import { getUser } from "../utils/auth.server"
+
 // ./app/routes/index.tsx
 export default function Index() {
   return (
@@ -6,3 +9,5 @@ export default function Index() {
     </div>
   )
 }
+
+
