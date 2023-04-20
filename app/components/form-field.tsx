@@ -14,8 +14,10 @@ export function FormField({ htmlFor, label, type = 'text', value, onChange = () 
     const [errorText, setErrorText] = useState(error)
 
     useEffect(() => {
+      console.log(error)
         setErrorText(error)
     }, [error])
+
   return (
     <>
       <label htmlFor={htmlFor} className="text-blue-600 font-semibold">

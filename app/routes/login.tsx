@@ -2,11 +2,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { Layout } from '~/components/layout'
 import { FormField } from '~/components/form-field'
-
-import { json, redirect , ActionFunction, LoaderFunction} from '@remix-run/node'
+import { Form, useActionData } from "@remix-run/react";
+import type { ActionFunction, LoaderFunction} from '@remix-run/node';
+import { json, redirect } from '@remix-run/node'
 import { validateEmail, validateName, validatePassword } from '../utils/validators.server'
 import { getUser, login, register } from '../utils/auth.server'
-import { Form, Scripts, useActionData } from '@remix-run/react'
+
 
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -14,10 +15,9 @@ export const loader: LoaderFunction = async ({ request }) => {
  return (await getUser(request)) ? redirect('/') : null
 }
 
-
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request })=> {
    
-
+  
   const form = await request.formData()
   const action = form.get('_action')
   const email = form.get('email')
@@ -69,19 +69,19 @@ export const action: ActionFunction = async ({ request }) => {
 
 
 
-export const shouldRevalidate = () => true;
 
 
 export default function Login() {
 
-  const [actionName, setAction] = useState('login')
+ const [actionName, setAction] = useState('login')
  
  // 1
- const actionData = useActionData<typeof action>();
+ const actionData = useActionData();
+ 
   // 2
   const firstLoad = useRef(true)
   const [errors, setErrors] = useState(actionData?.errors || {})
-  const [formError, setFormError] = useState(actionData?.error || '')
+  const [formError, setFormError] = useState(actionData?.error||"")
   // 3
   const [formData, setFormData] = useState({
     email: actionData?.fields?.email || '',
@@ -90,7 +90,6 @@ export default function Login() {
     lastName: actionData?.fields?.firstName || '',
   })
 
-  console.log(firstLoad.current,"-----");
 
    
     useEffect(() => {
@@ -101,32 +100,47 @@ export default function Login() {
             firstName: '',
             lastName: '',
         }
-        setErrors(newState)
-        setFormError('')
+        setFormError("")
         setFormData(newState)
         }
-    }, [actionName])
+        }, [actionName])
 
     useEffect(() => {
+  
         if (!firstLoad.current) {
-        setFormError('')
+         setFormError("")
+   
         }
     }, [formData])
 
-    useEffect(() => { 
-      firstLoad.current = false; 
-      
-    }, [])
+      useEffect(() => { 
+        firstLoad.current = false;
+      return()=>{
+       
+      } }, [])
 
+
+
+      useEffect(()=>{
+        if(actionData && actionData.errors){
+          
+          setErrors(actionData.errors);
+        }
+      },[actionData])
 
   // Updates the form data when an input changes
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>, field: string) => {
     setFormData(form => ({ ...form, [field]: event.target.value }))
+    setErrors({...errors,[field]:""})
   }
 
-
-
-
+  useEffect(
+    ()=>{
+      if(actionData && actionData.error){
+        setFormError(actionData.error);
+      }
+    },[actionData]
+  )
   return (
    
     <Layout>
@@ -141,7 +155,7 @@ export default function Login() {
         <h2 className="text-5xl font-extrabold text-yellow-300">Welcome to Kudos!</h2>
         <p className="font-semibold text-slate-300"> {actionName === 'login' ? 'Log In To Give Some Praise!' : 'Sign Up To Get Started!'}</p>
 
-        <form method="POST"  className="rounded-2xl bg-gray-200 p-6 w-96"  >
+       <Form method="post" className="rounded-2xl bg-gray-200 p-6 w-96"  >
            <div className="text-xs font-semibold text-center tracking-wide text-red-500 w-full">{formError}</div>
                 <FormField
                     htmlFor="email"
@@ -190,7 +204,7 @@ export default function Login() {
                 }
             </button>
           </div>
-        </form>
+        </Form>
       </div>
     </Layout>
     
